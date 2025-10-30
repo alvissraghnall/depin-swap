@@ -1,0 +1,16 @@
+@import 'tailwindcss';
+
+@theme {
+		--color-primary: #13b6ec;
+		--color-background-light: #f6f8f8;
+		--color-background-dark: #101d22;
+		--font-display: 'Space Grotesk', sans-serif;
+}
+
+@layer theme {
+	
+	.dark {
+		--color-background-light: #101d22;
+		--color-background-dark: #f6f8f8;
+	}
+}
