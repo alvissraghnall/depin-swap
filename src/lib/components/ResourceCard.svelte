@@ -124,6 +124,12 @@
 			}, 3000);
 		}
 	}
+
+	
+    function formatAddress(address: string | null) {
+        if (!address) return '';
+        return `${address.slice(0, 6)}...${address.slice(-4)}`;
+    }
 </script>
 
 <a
@@ -149,7 +155,7 @@
 			</p>
 			<p>
 				<span class="font-medium text-text-primary">Provider:</span>
-				{provider}
+				{formatAddress(provider)}
 			</p>
 		</div>
 	</div>

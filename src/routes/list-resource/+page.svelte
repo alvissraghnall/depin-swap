@@ -10,7 +10,7 @@
 		resourceType: '',
 		amount: 0,
 		duration: '',
-		price: 0,
+		price: 0.001,
 		contact: ''
 	});
 
@@ -93,7 +93,7 @@
 						return async ({ result }) => {
 							console.log(result);
 							if (result.type === 'success') {
-								await goto('/my-resources');
+								await goto('/my-listings');
 							}
 						};
 					}}
@@ -140,6 +140,7 @@
 									id="amount"
 									name="amount"
 									bind:value={formData.amount}
+									step="0.01"
 									placeholder="e.g., 6"
 									type="number"
 									disabled={!$wallet.isConnected}
@@ -199,7 +200,8 @@
 								id="price"
 								name="price"
 								bind:value={formData.price}
-								placeholder="e.g., 5"
+								placeholder="e.g., 0.005"
+								step="any"
 								type="number"
 								disabled={!$wallet.isConnected}
 								required
