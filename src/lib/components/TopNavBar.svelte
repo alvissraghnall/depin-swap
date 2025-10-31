@@ -13,7 +13,7 @@
         { href: '/my-listings', label: 'My Listings' },
 		{ href: '/wishlist', label: 'Wishlist' },
         { href: '/list-resource', label: 'List Resource' },
-        { href: '/faq', label: 'FAQ' }
+        //{ href: '/faq', label: 'FAQ' }
     ];
 
     function isActive(href: string) {
@@ -48,16 +48,16 @@
 </script>
 
 <header
-    class="sticky top-0 z-50 w-full border-b border-white/10 bg-background-dark/80 backdrop-blur-sm"
+    class="sticky top-0 z-50 w-full border-b border-border bg-background/90 backdrop-blur-sm"
 >
     <div
         class="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"
     >
-        <div class="flex items-center gap-4 text-white">
+        <div class="flex items-center gap-4 text-text-primary">
             <div class="size-6 text-primary">
                 <Logo />
             </div>
-            <h2 class="text-lg leading-tight font-bold tracking-[-0.015em] text-white">
+            <h2 class="text-lg leading-tight font-bold tracking-[-0.015em] text-text-primary">
                 DePin Marketplace
             </h2>
         </div>
@@ -66,8 +66,10 @@
             {#each navLinks as { href, label }}
                 <a
                     {href}
-                    class="text-sm font-medium transition-colors hover:text-white {!isActive(href)
-                        ? 'text-white/80'
+                    class="text-sm font-medium transition-colors hover:text-text-primary {!isActive(
+                        href
+                    )
+                        ? 'text-text-secondary'
                         : ''}"
                     class:text-primary={isActive(href)}
                 >
@@ -78,21 +80,20 @@
 
         <div class="flex items-center gap-4">
             {#if $isConnected}
-                <!-- Wallet Connected State -->
                 <div class="hidden md:flex items-center gap-2">
-                    <div 
-                        class="flex items-center gap-2 px-3 py-2 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                    <div
+                        class="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-surface hover:bg-surface-hover transition-colors cursor-pointer"
                         onclick={copyAddress}
                         title="Click to copy address"
                     >
                         <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                        <span class="text-sm font-medium text-white">
+                        <span class="text-sm font-medium text-text-primary">
                             {formatAddress($walletAddress)}
                         </span>
                     </div>
                     <button
                         onclick={handleDisconnect}
-                        class="flex items-center justify-center rounded-lg p-2 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                        class="flex items-center justify-center rounded-lg p-2 text-text-secondary hover:text-text-primary hover:bg-surface-hover transition-colors"
                         title="Disconnect wallet"
                     >
                         <span class="material-symbols-outlined">logout</span>
@@ -101,7 +102,7 @@
             {:else}
                 <button
                     onclick={openConnectModal}
-                    class="hidden h-10 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary px-4 text-sm leading-normal font-bold tracking-[0.015em] text-background-dark transition-opacity hover:opacity-80 md:flex"
+                    class="hidden h-10 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary px-4 text-sm leading-normal font-bold tracking-[0.015em] text-primary-foreground transition-opacity hover:opacity-80 md:flex"
                 >
                     <span class="truncate">Connect Wallet</span>
                 </button>
@@ -110,7 +111,7 @@
             <DarkModeToggle />
 
             <button
-                class="flex items-center justify-center text-white md:hidden"
+                class="flex items-center justify-center text-text-primary md:hidden"
                 onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
                 aria-label="Toggle menu"
             >
@@ -122,16 +123,16 @@
     </div>
 
     {#if mobileMenuOpen}
-        <div class="border-t border-white/10 bg-background-dark md:hidden">
+        <div class="border-t border-border bg-background md:hidden">
             <nav class="container mx-auto flex flex-col px-4 py-4">
                 {#each navLinks as { href, label }}
                     <a
                         {href}
                         onclick={closeMenu}
-                        class="border-b border-white/5 py-3 text-base font-medium transition-colors last:border-b-0 hover:text-white {!isActive(
+                        class="border-b border-surface py-3 text-base font-medium transition-colors last:border-b-0 hover:text-text-primary {!isActive(
                             href
                         )
-                            ? 'text-white/80'
+                            ? 'text-text-secondary'
                             : ''}"
                         class:text-primary={isActive(href)}
                     >
@@ -141,17 +142,16 @@
 
                 <div class="pt-4">
                     {#if $isConnected}
-                        <!-- Mobile Wallet Connected State -->
-                        <div class="flex items-center justify-between p-3 rounded-lg border border-white/20 bg-white/5 mb-3">
+                        <div class="flex items-center justify-between p-3 rounded-lg border border-border bg-surface mb-3">
                             <div class="flex items-center gap-2">
                                 <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                                <span class="text-sm font-medium text-white">
+                                <span class="text-sm font-medium text-text-primary">
                                     {formatAddress($walletAddress)}
                                 </span>
                             </div>
                             <button
                                 onclick={handleDisconnect}
-                                class="flex items-center justify-center rounded-lg p-1 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                                class="flex items-center justify-center rounded-lg p-1 text-text-secondary hover:text-text-primary hover:bg-surface-hover transition-colors"
                                 title="Disconnect wallet"
                             >
                                 <span class="material-symbols-outlined text-lg">logout</span>
@@ -160,7 +160,7 @@
                     {:else}
                         <button
                             onclick={openConnectModal}
-                            class="flex h-10 w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary px-4 text-sm leading-normal font-bold tracking-[0.015em] text-background-dark transition-opacity hover:opacity-80"
+                            class="flex h-10 w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary px-4 text-sm leading-normal font-bold tracking-[0.015em] text-primary-foreground transition-opacity hover:opacity-80"
                         >
                             <span class="truncate">Connect Wallet</span>
                         </button>

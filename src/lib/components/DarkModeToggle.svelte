@@ -74,7 +74,7 @@
 		>
 			{#if browser}
 				<span class="material-symbols-outlined text-xl">
-					{darkMode ? icons.dark : icons.light}
+					{!darkMode ? icons.dark : icons.light}
 				</span>
 			{:else}
 				<span class="material-symbols-outlined text-xl opacity-0"> light_mode </span>

@@ -129,69 +129,76 @@
 </script>
 
 <div
-	class="group flex flex-col overflow-hidden rounded-xl border border-white/10 bg-white/5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10"
+    class="group flex flex-col overflow-hidden rounded-xl border border-border bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10"
 >
-	<div class="flex-1 p-5">
-		<div class="mb-4 flex items-center justify-between">
-			<span
-				class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium {badgeClass}"
-			>
-				{type}
-			</span>
-			<span class="material-symbols-outlined text-white/40">{icon}</span>
-		</div>
+    <div class="flex-1 p-5">
+        <div class="mb-4 flex items-center justify-between">
+            <span
+                class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium {badgeClass}"
+            >
+                {type}
+            </span>
+            <span class="material-symbols-outlined text-text-secondary opacity-70">{icon}</span>
+        </div>
 
-		<h3 class="text-lg font-bold text-white">{title}</h3>
+        <h3 class="text-lg font-bold text-text-primary">{title}</h3>
 
-		<div class="mt-4 space-y-2 text-sm text-white/70">
-			<p>
-				<span class="font-medium text-white/90">Duration:</span>
-				{duration}
-			</p>
-			<p>
-				<span class="font-medium text-white/90">Provider:</span>
-				{provider}
-			</p>
-		</div>
-	</div>
-
-	<div class="border-t border-white/10 bg-white/5 p-4">
-		<div class="mb-3 text-center">
-			<span class="text-2xl font-bold text-primary">{parseInt(price as string)} ETH</span>
-			<span class="text-sm text-white/60">/ {priceUnit}</span>
-		</div>
-
-    <div class="flex gap-2">
-      <button
-        onclick={handleToggleWishlist}
-        disabled={isProcessing || wishlistLoading}
-        class="flex h-10 min-w-[40px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-white/10 px-3 text-sm font-bold leading-normal tracking-[0.015em] text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-        title={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
-      >
-        {#if wishlistLoading}
-          <span class="material-symbols-outlined animate-spin">refresh</span>
-        {:else}
-          <span class="material-symbols-outlined">
-            {inWishlist ? 'bookmark' : 'bookmark_border'}
-          </span>
-        {/if}
-      </button>
-
-      <button
-        onclick={handleBuyNow}
-        disabled={isProcessing}
-        class="flex h-10 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary px-4 text-sm font-bold leading-normal tracking-[0.015em] text-background-dark transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        <span class="truncate">
-          {#if isProcessing}
-            Processing...
-          {:else if !$isConnected}
-            Connect & Buy
-          {:else}
-            Buy Now
-          {/if}
-        </span>
-      </button>
+        <div class="mt-4 space-y-2 text-sm text-text-secondary">
+            <p>
+                <span class="font-medium text-text-primary">Duration:</span>
+                {duration}
+            </p>
+            <p>
+                <span class="font-medium text-text-primary">Provider:</span>
+                {provider}
+            </p>
+        </div>
     </div>
-	</div>
+
+	{#if statusMessage}
+	    <div class="rounded-lg bg-blue-500/10 border border-blue-500/20 px-3 py-2 text-sm text-blue-400">
+	      {statusMessage}
+	    </div>
+	  {/if}
+	  
+	  <div class="flex items-center justify-between border-t border-border p-4">
+	    <div class="mb-3">
+	      <p class="text-sm dark:text-white/60 text-slate-700">Price</p>
+	      <p class="text-2xl font-bold text-primary">{parseInt(price as string)} ETH</p>
+	      <p class="text-sm dark:text-white/40 text-slate-700">/ {priceUnit}</p>
+	    </div>
+
+        <div class="flex gap-2">
+            <button
+                onclick={handleToggleWishlist}
+                disabled={isProcessing || wishlistLoading}
+                class="flex h-10 min-w-[40px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-surface px-3 text-sm font-bold leading-normal tracking-[0.015em] text-text-primary transition-colors hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50"
+                title={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+            >
+                {#if wishlistLoading}
+                    <span class="material-symbols-outlined animate-spin">refresh</span>
+                {:else}
+                    <span class="material-symbols-outlined">
+                        {inWishlist ? 'bookmark' : 'bookmark_border'}
+                    </span>
+                {/if}
+            </button>
+
+            <button
+                onclick={handleBuyNow}
+                disabled={isProcessing}
+                class="flex h-10 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary px-4 text-sm font-bold leading-normal tracking-[0.015em] text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+                <span class="truncate">
+                    {#if isProcessing}
+                        Processing...
+                    {:else if !$isConnected}
+                        Connect & Buy
+                    {:else}
+                        Buy Now
+                    {/if}
+                </span>
+            </button>
+        </div>
+    </div>
 </div>

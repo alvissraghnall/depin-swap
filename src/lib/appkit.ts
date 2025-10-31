@@ -29,6 +29,10 @@ if (browser) {
 			description: 'Omnidepin Marketplace',
 			url: page.url.hostname,
 			icons: ['https://avatars.githubusercontent.com/u/179229932?s=200&v=4']
+		},
+		features: {
+			socials: false,
+			email: false,
 		}
 	});
 }

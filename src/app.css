@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
 
 	--color-primary: #13b6ec;
@@ -25,8 +27,8 @@
 
 		--color-primary-foreground: #f6f8f8; 
 
-		--color-background: #101d22; 
-		--color-foreground: #f6f8f8; 
+		--color-background: #101d22;
+		--color-foreground: #f6f8f8;
 
 		--color-text-primary: var(--color-foreground);
 		--color-text-secondary: rgba(255, 255, 255, 0.7); 
