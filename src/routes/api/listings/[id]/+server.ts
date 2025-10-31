@@ -5,7 +5,7 @@ import { ListingModel } from '$lib/server/models/Listing.model';
 
 export const GET: RequestHandler = async ({ params }) => {
 	try {
-		const listing = await ListingModel.findById(params.id).lean().exec();
+		const listing = await ListingModel.findById(params.id).lean();
 
 		if (!listing) {
 			return json({ error: 'Listing not found' }, { status: 404 });

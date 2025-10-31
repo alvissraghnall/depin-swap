@@ -14,7 +14,7 @@ export const getUserListings = query(
     try {      
       const listings = await ListingModel.find({ 
         provider: providerAddress 
-      }).limit(30).sort({ createdAt: -1 }).lean().exec();
+      }).limit(30).sort({ createdAt: -1 }).lean();
       
       return listings;
     } catch (err) {
@@ -27,7 +27,7 @@ export const getUserListings = query(
 export const getAllListings = query(async () => {
   try {
     
-    const listings = await ListingModel.find({ available: true }).limit(2 * 3 * 4 * 5).sort({ createdAt: -1 }).lean().exec();
+    const listings = await ListingModel.find({ available: true }).limit(2 * 3 * 4 * 5).sort({ createdAt: -1 }).lean();
     return listings;
   } catch (err) {
     console.error('Error fetching listings:', err);
@@ -39,7 +39,7 @@ export const getListing = query(
   z.string().min(1, "Listing ID is required").refine(v => isValidObjectId(v), 'Listing ID must be ObjectID!'),
   async (listingId) => {
     try {
-      const listing = await ListingModel.findById(listingId).lean().exec();
+      const listing = await ListingModel.findById(listingId).lean();
       if (!listing) {
         throw error(404, 'Listing not found');
       }
