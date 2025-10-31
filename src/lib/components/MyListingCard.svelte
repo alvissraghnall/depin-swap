@@ -2,7 +2,6 @@
 	import type { Listing } from '$lib/server/models/Listing.model';
 	import type { Base } from '@typegoose/typegoose/lib/defaultClasses';
 
-	
 	type Props = {
 		listing: Listing & Base;
 		onedit?: (id: string) => void;

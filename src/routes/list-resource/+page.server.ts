@@ -77,7 +77,6 @@ export const actions: Actions = {
 		const icon = iconMap[type];
 		const title = `${amount}${resourceType === 'storage' ? 'GB' : resourceType === 'compute' ? 'vCPU' : 'Mbps'}`;
 		const durationStr = `${duration} Days`;
-		
 
 		try {
 			const newListing = new ListingModel({

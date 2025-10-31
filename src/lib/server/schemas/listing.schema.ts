@@ -1,14 +1,33 @@
+import { isAddress } from 'ethers';
 import { z } from 'zod';
 
 export const listingSchema = z.object({
-	title: z.string().min(1, 'Title is required'),
-	type: z.enum(['Storage', 'Compute']),
-	duration: z.string().min(1, 'Duration is required'),
-	provider: z.string().min(1, 'Provider is required'),
-	price: z.string().min(1, 'Price is required'),
-	priceUnit: z.string().min(1, 'Price unit is required'),
-	icon: z.string().min(1, 'Icon is required'),
-	available: z.boolean().optional()
+	resourceType: z.enum(['storage', 'compute', 'bandwidth'], {
+		error: 'Invalid resource type'
+	}),
+	amount: z
+		.string()
+		.min(1, 'Amount is required')
+		.refine((val) => !isNaN(Number(val)) && Number(val) > 0, 'Amount must be a positive number')
+		.transform((val) => parseInt(val, 10)),
+	duration: z
+		.string()
+		.min(1, 'Duration is required')
+		.refine((val) => !isNaN(Number(val)) && Number(val) > 0, 'Duration must be a positive number')
+		.transform((val) => parseInt(val, 10)),
+	price: z
+		.string()
+		.min(1, 'Price is required')
+		.refine((val) => !isNaN(Number(val)) && Number(val) > 0, 'Price must be a positive number')
+		.transform((val) => parseInt(val, 10)),
+	contact: z
+		.string()
+		.min(1, 'Contact information is required')
+		.max(100, 'Contact information is too long'),
+	provider: z
+		.string()
+		.min(1, 'Provider address is required')
+		.refine((val) => isAddress(val), 'Invalid Ethereum address')
 });
 
 export type ListingInput = z.infer<typeof listingSchema>;

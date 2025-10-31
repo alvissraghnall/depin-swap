@@ -37,12 +37,10 @@
 </svelte:head>
 
 <ThemeProvider>
-    <div
-        class="relative flex min-h-screen w-full flex-col bg-background font-display"
-    >
-        <TopNavBar />
-        {@render children()}
-    </div>
+	<div class="relative flex min-h-screen w-full flex-col bg-background font-display">
+		<TopNavBar />
+		{@render children()}
+	</div>
 </ThemeProvider>
 
 <style>

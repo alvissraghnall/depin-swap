@@ -154,7 +154,8 @@
 					{/if}
 				</button>
 			</div>
-			<button class="fixed inset-0 z-40" onclick={closeDropdown} aria-label="Close dropdown"></button>
+			<button class="fixed inset-0 z-40" onclick={closeDropdown} aria-label="Close dropdown"
+			></button>
 		{/if}
 	</div>
 {:else if variant === 'switch'}

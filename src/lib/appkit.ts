@@ -32,7 +32,7 @@ if (browser) {
 		},
 		features: {
 			socials: false,
-			email: false,
+			email: false
 		}
 	});
 }

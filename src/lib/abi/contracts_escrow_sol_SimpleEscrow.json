@@ -1,1 +1,121 @@
-[{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"tradeId","type":"uint256"},{"indexed":true,"internalType":"address","name":"seller","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"FulfillmentConfirmed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"tradeId","type":"uint256"}],"name":"SellerConfirmed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"tradeId","type":"uint256"}],"name":"TradeCancelled","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"tradeId","type":"uint256"},{"indexed":true,"internalType":"address","name":"buyer","type":"address"},{"indexed":true,"internalType":"address","name":"seller","type":"address"},{"indexed":false,"internalType":"uint256","name":"price","type":"uint256"}],"name":"TradeCreated","type":"event"},{"inputs":[{"internalType":"uint256","name":"_tradeId","type":"uint256"}],"name":"cancelTrade","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tradeId","type":"uint256"}],"name":"confirmFulfillment","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address payable","name":"_seller","type":"address"},{"internalType":"uint256","name":"_price","type":"uint256"}],"name":"createTrade","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"getContractBalance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tradeId","type":"uint256"}],"name":"getTrade","outputs":[{"components":[{"internalType":"uint256","name":"tradeId","type":"uint256"},{"internalType":"address payable","name":"buyer","type":"address"},{"internalType":"address payable","name":"seller","type":"address"},{"internalType":"uint256","name":"price","type":"uint256"},{"internalType":"enum SimpleEscrow.TradeStatus","name":"status","type":"uint8"},{"internalType":"bool","name":"sellerConfirmed","type":"bool"},{"internalType":"bool","name":"buyerConfirmed","type":"bool"}],"internalType":"struct SimpleEscrow.Trade","name":"","type":"tuple"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_tradeId","type":"uint256"}],"name":"sellerAcceptTrade","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"tradeCounter","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"trades","outputs":[{"internalType":"uint256","name":"tradeId","type":"uint256"},{"internalType":"address payable","name":"buyer","type":"address"},{"internalType":"address payable","name":"seller","type":"address"},{"internalType":"uint256","name":"price","type":"uint256"},{"internalType":"enum SimpleEscrow.TradeStatus","name":"status","type":"uint8"},{"internalType":"bool","name":"sellerConfirmed","type":"bool"},{"internalType":"bool","name":"buyerConfirmed","type":"bool"}],"stateMutability":"view","type":"function"}]
+[
+	{
+		"anonymous": false,
+		"inputs": [
+			{ "indexed": true, "internalType": "uint256", "name": "tradeId", "type": "uint256" },
+			{ "indexed": true, "internalType": "address", "name": "seller", "type": "address" },
+			{ "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
+		],
+		"name": "FulfillmentConfirmed",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{ "indexed": true, "internalType": "uint256", "name": "tradeId", "type": "uint256" }
+		],
+		"name": "SellerConfirmed",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{ "indexed": true, "internalType": "uint256", "name": "tradeId", "type": "uint256" }
+		],
+		"name": "TradeCancelled",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{ "indexed": true, "internalType": "uint256", "name": "tradeId", "type": "uint256" },
+			{ "indexed": true, "internalType": "address", "name": "buyer", "type": "address" },
+			{ "indexed": true, "internalType": "address", "name": "seller", "type": "address" },
+			{ "indexed": false, "internalType": "uint256", "name": "price", "type": "uint256" }
+		],
+		"name": "TradeCreated",
+		"type": "event"
+	},
+	{
+		"inputs": [{ "internalType": "uint256", "name": "_tradeId", "type": "uint256" }],
+		"name": "cancelTrade",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [{ "internalType": "uint256", "name": "_tradeId", "type": "uint256" }],
+		"name": "confirmFulfillment",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{ "internalType": "address payable", "name": "_seller", "type": "address" },
+			{ "internalType": "uint256", "name": "_price", "type": "uint256" }
+		],
+		"name": "createTrade",
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getContractBalance",
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [{ "internalType": "uint256", "name": "_tradeId", "type": "uint256" }],
+		"name": "getTrade",
+		"outputs": [
+			{
+				"components": [
+					{ "internalType": "uint256", "name": "tradeId", "type": "uint256" },
+					{ "internalType": "address payable", "name": "buyer", "type": "address" },
+					{ "internalType": "address payable", "name": "seller", "type": "address" },
+					{ "internalType": "uint256", "name": "price", "type": "uint256" },
+					{ "internalType": "enum SimpleEscrow.TradeStatus", "name": "status", "type": "uint8" },
+					{ "internalType": "bool", "name": "sellerConfirmed", "type": "bool" },
+					{ "internalType": "bool", "name": "buyerConfirmed", "type": "bool" }
+				],
+				"internalType": "struct SimpleEscrow.Trade",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [{ "internalType": "uint256", "name": "_tradeId", "type": "uint256" }],
+		"name": "sellerAcceptTrade",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "tradeCounter",
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+		"name": "trades",
+		"outputs": [
+			{ "internalType": "uint256", "name": "tradeId", "type": "uint256" },
+			{ "internalType": "address payable", "name": "buyer", "type": "address" },
+			{ "internalType": "address payable", "name": "seller", "type": "address" },
+			{ "internalType": "uint256", "name": "price", "type": "uint256" },
+			{ "internalType": "enum SimpleEscrow.TradeStatus", "name": "status", "type": "uint8" },
+			{ "internalType": "bool", "name": "sellerConfirmed", "type": "bool" },
+			{ "internalType": "bool", "name": "buyerConfirmed", "type": "bool" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]

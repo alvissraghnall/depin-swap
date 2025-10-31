@@ -1,4 +1,4 @@
-import type mongoose from "mongoose";
+import type mongoose from 'mongoose';
 
 export type ResourceType = 'Storage' | 'Compute' | string;
 

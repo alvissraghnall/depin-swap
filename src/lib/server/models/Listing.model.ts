@@ -7,11 +7,10 @@ import type { Types } from 'mongoose';
 	next();
 })
 export class Listing extends TimeStamps implements Base {
-
 	public _id!: Types.ObjectId;
 
 	id!: string;
-	
+
 	@prop({ required: true, type: String })
 	title!: string;
 
