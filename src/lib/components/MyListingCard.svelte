@@ -6,9 +6,10 @@
 		listing: Listing & Base;
 		onedit?: (id: string) => void;
 		onremove?: (id: string) => void;
+		disabled: boolean;
 	};
 
-	let { listing, onedit, onremove }: Props = $props();
+	let { listing, onedit, onremove, disabled }: Props = $props();
 
 	const amount = $derived(
 		listing.title.includes('GB')
@@ -69,12 +70,14 @@
 	<div class="mt-2 flex gap-3">
 		<button
 			onclick={handleEdit}
+			{disabled}
 			class="flex h-9 flex-1 items-center justify-center overflow-hidden rounded-lg bg-gray-200 px-3 text-sm font-bold text-gray-800 transition-colors hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
 		>
 			<span class="truncate">Edit</span>
 		</button>
 		<button
 			onclick={handleRemove}
+			{disabled}
 			class="flex h-9 flex-1 items-center justify-center overflow-hidden rounded-lg bg-transparent px-3 text-sm font-bold text-red-500 transition-colors hover:bg-red-500/10 dark:text-red-400"
 		>
 			<span class="truncate">Remove</span>

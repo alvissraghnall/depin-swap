@@ -126,7 +126,8 @@
 	}
 </script>
 
-<div
+<a
+	href="/listings/{_id.toString()}"
 	class="group flex flex-col overflow-hidden rounded-xl border border-border bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10"
 >
 	<div class="flex-1 p-5">
@@ -201,4 +202,4 @@
 			</button>
 		</div>
 	</div>
-</div>
+</a>

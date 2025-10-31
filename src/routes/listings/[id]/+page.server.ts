@@ -16,6 +16,8 @@ export const load: PageServerLoad = async ({ params }) => {
 		// Re-throw the error if it's already a SvelteKit error
 		if (err instanceof Error && 'status' in err) {
 			throw err;
+		} else if (err instanceof Error && err.name === 'CastError') {
+            throw error(400, 'Invalid ID provided!'); 
 		}
 
 		console.error('Error fetching listing:', err);
