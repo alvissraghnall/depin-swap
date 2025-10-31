@@ -21,7 +21,6 @@ export const load: PageServerLoad = async () => {
 
 export const actions: Actions = {
 	default: async ({ request }) => {
-
 		const formData = Object.fromEntries(await request.formData());
 
 		const result = listingSchema.safeParse(formData);

@@ -4,15 +4,10 @@ import { ListingModel } from '$lib/server/models/Listing.model';
 export const load: PageServerLoad = async () => {
 	try {
 		const listings = await ListingModel.find().sort({ createdAt: -1 }).lean().exec();
-		console.log(listings);
-		return {
-			listings: JSON.parse(JSON.stringify(listings))
-		};
+
+		return { listings: JSON.parse(JSON.stringify(listings)) };
 	} catch (error) {
 		console.error('Error fetching listings:', error);
-		return {
-			listings: [],
-			error: 'Failed to fetch listings'
-		};
+		return { listings: [], error: 'Failed to fetch listings' };
 	}
 };

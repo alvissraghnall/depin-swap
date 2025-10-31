@@ -9,7 +9,7 @@
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"experimentalDecorators": true,
-    	"emitDecoratorMetadata": true,
+		"emitDecoratorMetadata": true,
 		"sourceMap": true,
 		"strict": true,
 		"moduleResolution": "bundler"

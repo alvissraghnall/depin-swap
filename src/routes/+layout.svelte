@@ -1,4 +1,6 @@
 <script>
+	import TopNavBar from '$lib/components/TopNavBar.svelte';
+	import ThemeProvider from '$lib/components/ThemeProvider.svelte';
 	import '../app.css';
 
 	let { children } = $props();
@@ -15,13 +17,33 @@
 		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
 		rel="stylesheet"
 	/>
+
+	<script>
+		(() => {
+			try {
+				const saved = localStorage.getItem('theme-preference');
+				const systemDark = matchMedia('(prefers-color-scheme: dark)').matches;
+				const theme = saved ?? (systemDark ? 'dark' : 'light');
+
+				document.documentElement.classList.add(theme);
+				document.documentElement.style.colorScheme = theme;
+			} catch {
+				// If localStorage is unavailable (SSR, privacy mode), default to light
+				document.documentElement.classList.add('light');
+				document.documentElement.style.colorScheme = 'light';
+			}
+		})();
+	</script>
 </svelte:head>
 
-<div
-	class="bg-background-light dark:bg-background-dark font-display flex min-h-[100dvh] w-full flex-col"
->
-	{@render children()}
-</div>
+<ThemeProvider>
+	<div
+		class="relative flex min-h-screen w-full flex-col bg-background-light font-display dark:bg-background-dark"
+	>
+		<TopNavBar />
+		{@render children()}
+	</div>
+</ThemeProvider>
 
 <style>
 	:global(html),
@@ -31,5 +53,17 @@
 		font-family: 'Space Grotesk', sans-serif;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
+	}
+
+	:global(body) {
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+	:global(*) {
+		transition:
+			background-color 0.3s ease,
+			border-color 0.3s ease,
+			color 0.3s ease;
 	}
 </style>

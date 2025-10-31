@@ -37,13 +37,22 @@
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
-			"esbuild"
+			"@reown/appkit",
+			"bufferutil",
+			"esbuild",
+			"utf-8-validate"
 		]
 	},
 	"dependencies": {
+		"@nanostores/persistent": "^1.2.0",
+		"@reown/appkit": "^1.8.12",
+		"@reown/appkit-adapter-ethers": "^1.8.12",
+		"@reown/appkit-adapter-solana": "^1.8.12",
 		"@typegoose/typegoose": "^12.20.0",
 		"class-transformer": "~0.5.1",
+		"ethers": "^6.15.0",
 		"mongoose": "^8.19.2",
+		"nanostores": "^1.0.1",
 		"zod": "^4.1.12"
 	}
 }

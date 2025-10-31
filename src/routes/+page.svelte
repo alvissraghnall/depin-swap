@@ -1,5 +1,4 @@
 <script lang="ts">
-	import TopNavBar from '$lib/components/TopNavBar.svelte';
 	import PageHeading from '$lib/components/PageHeading.svelte';
 	import Filters from '$lib/components/Filters.svelte';
 	import ResourceGrid from '$lib/components/ResourceGrid.svelte';
@@ -9,8 +8,6 @@
 	let { data }: PageProps = $props();
 	console.log(data);
 </script>
-
-<TopNavBar />
 
 <main class="flex-1">
 	<div class="container mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">

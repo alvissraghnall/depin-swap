@@ -5,7 +5,7 @@ import { ListingModel } from '$lib/server/models/Listing.model';
 
 export const load: PageServerLoad = async ({ params }) => {
 	try {
-		const listing = await ListingModel.findById(params.id);
+		const listing = await ListingModel.findById(params.id).lean().exec();
 
 		if (!listing) {
 			throw error(404, 'Listing not found');
