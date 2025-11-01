@@ -124,9 +124,15 @@
 			}, 3000);
 		}
 	}
+
+	function formatAddress(address: string | null) {
+		if (!address) return '';
+		return `${address.slice(0, 6)}...${address.slice(-4)}`;
+	}
 </script>
 
-<div
+<a
+	href="/listings/{_id.toString()}"
 	class="group flex flex-col overflow-hidden rounded-xl border border-border bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10"
 >
 	<div class="flex-1 p-5">
@@ -148,7 +154,7 @@
 			</p>
 			<p>
 				<span class="font-medium text-text-primary">Provider:</span>
-				{provider}
+				{formatAddress(provider)}
 			</p>
 		</div>
 	</div>
@@ -201,4 +207,4 @@
 			</button>
 		</div>
 	</div>
-</div>
+</a>

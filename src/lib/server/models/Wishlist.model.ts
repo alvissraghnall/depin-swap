@@ -1,16 +1,13 @@
 import { getModelForClass, prop, pre } from '@typegoose/typegoose';
 import { Listing } from './Listing.model';
-import { TimeStamps, type Base } from '@typegoose/typegoose/lib/defaultClasses';
-import type { Types } from 'mongoose';
+import { DocumentCT } from './DocumentCT.model';
 
 @pre<Wishlist>('save', function (next) {
 	this.updatedAt = new Date();
 	next();
 })
-export class Wishlist extends TimeStamps implements Base {
-	_id!: Types.ObjectId;
-
-	id!: string;
+export class Wishlist extends DocumentCT {
+	_id!: string;
 
 	@prop({ required: true, type: String })
 	userAddress!: string;

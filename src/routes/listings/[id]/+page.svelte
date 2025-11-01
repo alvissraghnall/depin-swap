@@ -7,8 +7,10 @@
 	import type { PageProps } from './$types';
 	import { isInWishlist, toggleWishlist } from '$lib/remote/wishlist.remote';
 	import type { Base } from '@typegoose/typegoose/lib/defaultClasses';
+	import { browser } from '$app/environment';
+	import type { Resource } from '$lib/types/resource';
 
-	let listing = $state<(Listing & Base) | null>(null);
+	let listing = $state<Listing | null>(null);
 	let loading = $state(true);
 	let error = $state<string | null>(null);
 	let isProcessing = $state(false);
@@ -22,10 +24,14 @@
 
 	const { data }: PageProps = $props();
 
-	listing = data.listing as Listing & Base;
+	listing = data.listing as Listing;
+
+	if (browser) {
+		loading = false;
+	}
 
 	async function checkWishlistStatus() {
-		if ($isConnected && $walletAddress && listing) {
+		if ($walletAddress && listing) {
 			try {
 				wishlistLoading = true;
 				inWishlist = await isInWishlist({
@@ -165,8 +171,6 @@
 	}
 </script>
 
-<TopNavBar />
-
 <main class="container mx-auto flex-grow px-4 py-8 md:py-12">
 	{#if loading}
 		<div class="flex h-64 items-center justify-center">
@@ -201,7 +205,6 @@
 					</div>
 				</div>
 
-				<!-- Listing Details -->
 				<div class="flex flex-col gap-8 lg:col-span-2">
 					<!-- Title and Tags -->
 					<div class="flex flex-col gap-4">
@@ -232,7 +235,6 @@
 						</div>
 					</div>
 
-					<!-- Details Grid -->
 					<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 						<div class="rounded-lg border border-white/10 bg-white/5 p-4">
 							<p class="text-sm text-white/60">Amount</p>
@@ -252,7 +254,6 @@
 						</div>
 					</div>
 
-					<!-- Lister Information -->
 					<div class="rounded-lg border border-white/10 bg-white/5 p-6">
 						<h3 class="text-lg font-bold text-white">Lister Information</h3>
 						<div class="mt-4 flex items-center justify-between border-t border-white/10 pt-4">
@@ -279,7 +280,6 @@
 						</div>
 					</div>
 
-					<!-- Status Message -->
 					{#if statusMessage}
 						<div
 							class="rounded-lg border border-blue-500/20 bg-blue-500/10 px-4 py-3 text-sm text-blue-400"
@@ -288,7 +288,6 @@
 						</div>
 					{/if}
 
-					<!-- Action Buttons -->
 					<div class="flex flex-col gap-4 sm:flex-row">
 						<button
 							onclick={handleBuyNow}
@@ -319,7 +318,6 @@
 						</button>
 					</div>
 
-					<!-- Technical Details -->
 					<div class="border-t border-white/10 pt-6">
 						<details
 							class="group"

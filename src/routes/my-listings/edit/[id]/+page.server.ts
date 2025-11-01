@@ -1,8 +1,9 @@
 import type { PageServerLoad, Actions } from './$types';
 import { error, fail, redirect } from '@sveltejs/kit';
-import { ListingModel } from '$lib/server/models/Listing.model';
+import { Listing, ListingModel } from '$lib/server/models/Listing.model';
 import { listingSchema } from '$lib/server/schemas/listing.schema';
 import z from 'zod';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 
 const editListingSchema = listingSchema.extend({
 	amountUnit: z.string().min(2, 'Amount Unit is required').max(5, 'Amount unit is too long'),
@@ -11,16 +12,20 @@ const editListingSchema = listingSchema.extend({
 
 export const load: PageServerLoad = async ({ params }) => {
 	try {
-		const listing = await ListingModel.findById(params.id);
+		const listing = await ListingModel.findById(params.id).lean();
+		const deserialized = plainToInstance(Listing, listing);
+		const serialized = instanceToPlain(deserialized);
 
 		if (!listing) {
 			return error(404, 'Listing not found');
 		}
 
-		return { listing };
+		return { listing: serialized };
 	} catch (err) {
 		if (err instanceof Error && 'status' in err) {
 			throw err;
+		} else if (err instanceof Error && err.name === 'CastError') {
+			throw error(400, 'Invalid ID provided!');
 		}
 
 		console.error('Error fetching listing:', err);

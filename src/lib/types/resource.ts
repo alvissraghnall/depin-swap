@@ -1,9 +1,8 @@
-import type mongoose from 'mongoose';
-
-export type ResourceType = 'Storage' | 'Compute' | string;
+export type ResourceType = 'Storage' | 'Compute' | 'Bandwidth';
 
 export interface Resource {
-	_id: mongoose.Types.ObjectId;
+	_id: string;
+	id: string;
 	title: string;
 	type: ResourceType;
 	duration: string;
