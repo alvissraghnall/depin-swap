@@ -14,13 +14,13 @@ if (browser) {
 		throw new Error('Project ID is not set');
 	}
 
-	const networks: [AppKitNetwork, ...AppKitNetwork[]] = [solanaTestnet, sepolia, solanaDevnet];
+	const networks: [AppKitNetwork] = [sepolia];
 
 	const ethersAdapter = new EthersAdapter();
 	const solAdapter = new SolanaAdapter();
 
 	appKit = createAppKit({
-		adapters: [ethersAdapter, solAdapter],
+		adapters: [ethersAdapter],
 		networks: networks,
 		defaultNetwork: sepolia,
 		projectId,

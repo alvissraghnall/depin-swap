@@ -10,7 +10,7 @@
 		resourceType: '',
 		amount: 0,
 		duration: '',
-		price: 0.001,
+		price: '',
 		contact: ''
 	});
 
@@ -201,8 +201,7 @@
 								name="price"
 								bind:value={formData.price}
 								placeholder="e.g., 0.005"
-								step="any"
-								type="number"
+								type="text"
 								disabled={!$wallet.isConnected}
 								required
 							/>

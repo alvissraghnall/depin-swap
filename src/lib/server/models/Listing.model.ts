@@ -1,15 +1,12 @@
 import { getModelForClass, prop, pre } from '@typegoose/typegoose';
-import { TimeStamps, type Base } from '@typegoose/typegoose/lib/defaultClasses';
-import type { Types } from 'mongoose';
+import { DocumentCT } from './DocumentCT.model';
 
 @pre<Listing>('save', function (next) {
 	this.updatedAt = new Date();
 	next();
 })
-export class Listing extends TimeStamps implements Base {
-	public _id!: Types.ObjectId;
-
-	id!: string;
+export class Listing extends DocumentCT {
+	public _id!: string;
 
 	@prop({ required: true, type: String })
 	title!: string;

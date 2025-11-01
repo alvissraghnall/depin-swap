@@ -3,7 +3,7 @@
 	import type { Base } from '@typegoose/typegoose/lib/defaultClasses';
 
 	type Props = {
-		listing: Listing & Base;
+		listing: Listing;
 		onedit?: (id: string) => void;
 		onremove?: (id: string) => void;
 		disabled: boolean;

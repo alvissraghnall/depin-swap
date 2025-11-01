@@ -125,11 +125,10 @@
 		}
 	}
 
-	
-    function formatAddress(address: string | null) {
-        if (!address) return '';
-        return `${address.slice(0, 6)}...${address.slice(-4)}`;
-    }
+	function formatAddress(address: string | null) {
+		if (!address) return '';
+		return `${address.slice(0, 6)}...${address.slice(-4)}`;
+	}
 </script>
 
 <a

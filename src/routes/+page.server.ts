@@ -3,7 +3,10 @@ import { ListingModel } from '$lib/server/models/Listing.model';
 
 export const load: PageServerLoad = async () => {
 	try {
-		const listings = await ListingModel.find().limit(2 * 3 * 4 * 5).sort({ createdAt: -1 }).lean();
+		const listings = await ListingModel.find()
+			.limit(2 * 3 * 4 * 5)
+			.sort({ createdAt: -1 })
+			.lean();
 		console.log(listings);
 		return {
 			listings: JSON.parse(JSON.stringify(listings))

@@ -6,7 +6,10 @@ import { ListingModel } from '$lib/server/models/Listing.model';
 export const GET: RequestHandler = async () => {
 	try {
 		//await connectDB();
-		const listings = await ListingModel.find().sort({ createdAt: -1 });
+		const listings = await ListingModel.find()
+			.limit(2 * 3 * 4 * 5)
+			.sort({ createdAt: -1 });
+
 		return json(listings);
 	} catch (error) {
 		console.error('Error fetching listings:', error);
