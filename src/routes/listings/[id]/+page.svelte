@@ -216,14 +216,14 @@
                                         <div class="flex flex-col gap-4">
                                                 <div class="flex flex-wrap gap-3">
                                                         <div
-                                                                class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full {getTypeColor(
+                                                                class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full px-4 {getTypeColor(
                                                                         listing.type
                                                                 )}"
                                                         >
                                                                 <p class="text-sm font-medium">{listing.type}</p>
                                                         </div>
                                                         <div
-                                                                class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary/20 text-primary"
+                                                                class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full px-4 bg-primary/20 text-primary"
                                                         >
                                                                 <p class="text-sm font-medium">Available</p>
                                                         </div>
@@ -263,7 +263,7 @@
                                                         
                                                         <p class="text-sm text-foreground/60">Price (ETH)</p>
                                                         
-                                                        <p class="text-lg font-semibold text-foreground">{listing.price} ETH</p>
+                                                        <p class="text-lg font-semibold text-foreground">{listing.price / (10 ** 9)} ETH</p>
                                                         
                                                 </div>
                                                 <div class="rounded-lg border border-border bg-surface p-4">
