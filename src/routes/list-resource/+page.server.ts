@@ -22,8 +22,8 @@ const listingSchema = z.object({
 	price: z
 		.string()
 		.min(1, 'Price is required')
-		.refine((val) => !isNaN(Number(val)) && Number(val) > 0, 'Price must be a positive number')
-		.transform((val) => parseInt(val, 10)),
+		.refine((val) => !isNaN(Number(val)) && Number(val) > 0 && Number(val) < 1_000_000, 'Price must be a positive number and not more than 1M')
+		.transform((val) => (parseFloat(val) * (10 ** 9))),
 	contact: z
 		.string()
 		.min(1, 'Contact information is required')

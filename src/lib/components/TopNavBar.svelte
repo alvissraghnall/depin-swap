@@ -25,6 +25,7 @@
 
 	function closeMenu() {
 		mobileMenuOpen = false;
+		console.log(currentPath);
 	}
 
 	function openConnectModal() {
