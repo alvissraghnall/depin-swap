@@ -69,7 +69,7 @@
 <main class="flex-1">
 	<div class="container mx-auto max-w-full px-4 py-8 sm:px-6 lg:px-8">
 		<PageHeading />
-		<Filters bind:searchValue={searchValue} bind:resourceType={resourceType} bind:sortBy={sortBy} onReset={resetFilters} />
+		<Filters bind:searchValue bind:resourceType bind:sortBy onReset={resetFilters} />
 
 		{#if data.error}
 			<div class="mb-6 rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-red-400">

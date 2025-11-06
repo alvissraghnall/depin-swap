@@ -55,7 +55,7 @@
 		}
 		duration = duration.trim();
 
-		const priceStr = (data.listing.price / (10 ** 9)).toString();
+		const priceStr = (data.listing.price / 10 ** 9).toString();
 		price = priceStr.includes('ETH') ? priceStr.split('ETH')[0] : priceStr;
 
 		contact = data.listing.contact;

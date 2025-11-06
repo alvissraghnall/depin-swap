@@ -5,12 +5,17 @@ import { listingSchema } from '$lib/server/schemas/listing.schema';
 import z from 'zod';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 
-const editListingSchema = listingSchema.omit({
-	resourceType: true
-}).extend({
-	amountUnit: z.string().min(2, 'Amount Unit is required').max(5, 'Amount unit is too long'),
-	durationUnit: z.string().min(3, 'Duration Unit is required').max(10, 'Duration unit is too long')
-});
+const editListingSchema = listingSchema
+	.omit({
+		resourceType: true
+	})
+	.extend({
+		amountUnit: z.string().min(2, 'Amount Unit is required').max(5, 'Amount unit is too long'),
+		durationUnit: z
+			.string()
+			.min(3, 'Duration Unit is required')
+			.max(10, 'Duration unit is too long')
+	});
 
 export const load: PageServerLoad = async ({ params }) => {
 	try {
