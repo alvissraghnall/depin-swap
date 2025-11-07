@@ -5,7 +5,7 @@
 	import { appKit } from '$lib/appkit';
 	import { wallet, walletAddress, isConnected } from '$lib/stores/wallet';
 
-	const currentPath = $derived(page.url.pathname);
+	//const currentPath = page.url.pathname;
 	let mobileMenuOpen = $state(false);
 
 	const navLinks = [
@@ -19,14 +19,14 @@
 
 	function isActive(href: string) {
 		if (href === '/') {
-			return currentPath === '/';
+			return page.url.pathname === '/';
 		}
-		return currentPath.startsWith(href);
+		return page.url.pathname.startsWith(href);
 	}
 
 	function closeMenu() {
 		mobileMenuOpen = false;
-		console.log(currentPath);
+		console.log(page.url.pathname);
 	}
 
 	function openConnectModal() {
