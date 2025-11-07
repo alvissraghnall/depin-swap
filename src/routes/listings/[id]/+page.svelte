@@ -9,6 +9,8 @@
 	import type { Base } from '@typegoose/typegoose/lib/defaultClasses';
 	import { browser } from '$app/environment';
 	import type { Resource } from '$lib/types/resource';
+	import { createPurchase } from '$lib/remote/purchases.remote';
+	import { goto } from '$app/navigation';
 
 	let listing = $state<Listing | null>(null);
 	let loading = $state(true);
@@ -18,7 +20,7 @@
 	let isWatchlisted = $state(false);
 	let showTechnicalDetails = $state(false);
 	let inWishlist = $state(false);
-	let wishlistLoading = $state(true);
+	let wishlistLoading = $state(false);
 
 	const listingId = $derived(page.params.id);
 
@@ -57,6 +59,7 @@
 
 	async function handleBuyNow(ev: Event) {
 		ev.stopPropagation();
+		ev.preventDefault();
 		if (!listing) return;
 
 		if (!$isConnected) {
@@ -81,12 +84,25 @@
 
 			const result = await escrowService.createTrade({
 				sellerAddress: listing.provider,
-				priceInEth: listing.price / 10 ** 9
+				priceInEth: listing.price / (10 ** 9)
 			});
 
 			if (result.success) {
 				statusMessage = 'Trade created successfully!';
 				alert(`Trade created successfully! Transaction hash: ${result.transactionHash}`);
+
+				if($walletAddress) {
+					
+					createPurchase({
+						listingId: listingId!,
+						buyerAddress: $walletAddress,
+						transactionHash: result.transactionHash ?? '0xHASH'
+					}).then(res => {
+						if(res.success) {
+							goto('/my-purchases');
+						}
+					})
+				}
 			} else {
 				statusMessage = null;
 				alert(result.error || 'Transaction failed');
@@ -113,7 +129,7 @@
 			return;
 		}
 
-		isProcessing = true;
+		wishlistLoading = true;
 		statusMessage = inWishlist ? 'Removing from wishlist...' : 'Adding to wishlist...';
 
 		try {
@@ -134,7 +150,7 @@
 			statusMessage = null;
 			alert('Failed to update wishlist');
 		} finally {
-			isProcessing = false;
+			wishlistLoading = false;
 			setTimeout(() => {
 				statusMessage = null;
 			}, 3000);
@@ -315,14 +331,29 @@
 						<button
 							onclick={handleToggleWishlist}
 							disabled={isProcessing || wishlistLoading}
-							class="flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-surface px-6 py-3 text-base font-bold text-foreground transition hover:bg-surface-hover sm:w-auto"
+							class="group flex w-full items-center justify-center gap-2 rounded-lg border border-border/70 bg-surface px-6 py-3 text-base font-semibold text-foreground transition-all duration-200 hover:border-accent hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
 							title={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
 						>
-							<span class="material-symbols-outlined">
-								{inWishlist ? 'bookmark' : 'bookmark_add'}
+							<span
+								class="material-symbols-outlined text-lg transition-transform duration-200 group-hover:scale-110"
+							>
+								{#if wishlistLoading}
+									<span class="material-symbols-outlined animate-spin text-accent">refresh</span>
+								{:else if inWishlist}
+									bookmark
+								{:else}
+									bookmark_add
+								{/if}
 							</span>
-							<span class="hidden sm:inline">
-								{inWishlist ? 'Remove from Watchlist' : 'Add to Watchlist'}
+
+							<span class="hidden sm:inline max-md:text-sm">
+								{#if wishlistLoading}
+									Loading...
+								{:else if inWishlist}
+									Remove from Wishlist
+								{:else}
+									Add to Wishlist
+								{/if}
 							</span>
 						</button>
 					</div>

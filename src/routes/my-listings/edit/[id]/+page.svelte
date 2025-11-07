@@ -159,7 +159,7 @@
 				use:enhance={({ formData }) => {
 					isProcessing = true;
 					statusMessage = 'Saving changes...';
-					formData.set('provider', $walletAddress);
+					formData.set('provider', $walletAddress!);
 
 					return async ({ result }) => {
 						if (result.type === 'success') {

@@ -48,6 +48,7 @@
 
 	async function handleBuyNow(ev: Event) {
 		ev.stopPropagation();
+		ev.preventDefault();
 
 		if (!$wallet.isConnected) {
 			await wallet.connect();
@@ -93,7 +94,9 @@
 		}
 	}
 
-	async function handleToggleWishlist() {
+	async function handleToggleWishlist(ev: Event) {
+		ev.stopPropagation();
+		ev.preventDefault();
 		if (!$isConnected) {
 			await wallet.connect();
 			return;
@@ -186,7 +189,7 @@
 				{#if wishlistLoading}
 					<span class="material-symbols-outlined animate-spin">refresh</span>
 				{:else}
-					<span class="material-symbols-outlined">
+					<span class="material-symbols-outlined { inWishlist ? 'fvsf' : '' }">
 						{inWishlist ? 'bookmark' : 'bookmark_border'}
 					</span>
 				{/if}
@@ -210,3 +213,11 @@
 		</div>
 	</div>
 </a>
+
+<style>
+
+	.fvsf {
+		font-variation-settings: 'FILL' 1;
+	}
+
+</style>

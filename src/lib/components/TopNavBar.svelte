@@ -11,6 +11,7 @@
 	const navLinks = [
 		{ href: '/', label: 'Marketplace' },
 		{ href: '/my-listings', label: 'My Listings' },
+		{ href: '/my-purchases', label: 'My Purchases' },
 		{ href: '/wishlist', label: 'Wishlist' },
 		{ href: '/list-resource', label: 'List Resource' }
 		//{ href: '/faq', label: 'FAQ' }

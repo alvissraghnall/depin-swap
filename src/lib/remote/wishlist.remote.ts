@@ -1,12 +1,15 @@
 import * as z from 'zod';
 import { query, command } from '$app/server';
 import { error } from '@sveltejs/kit';
-import { WishlistModel } from '$lib/server/models/Wishlist.model';
+import { Wishlist, WishlistModel } from '$lib/server/models/Wishlist.model';
 import { ListingModel } from '$lib/server/models/Listing.model';
 import { isAddress } from 'ethers';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
+import { isValidObjectId } from 'mongoose';
 
 const addToWishlistSchema = z.object({
-	listingId: z.string().min(1, 'Listing ID is required'),
+	listingId: z.string().min(1, 'Listing ID is required')
+		.refine(val => isValidObjectId(val), "Enter valid Listing ID!"),
 	userAddress: z
 		.string()
 		.min(30, 'User address is required')
@@ -15,10 +18,12 @@ const addToWishlistSchema = z.object({
 
 const removeFromWishlistSchema = z.object({
 	wishlistId: z.string().min(1, 'Wishlist ID is required')
+		.refine(val => isValidObjectId(val), "Enter valid Listing ID!"),
 });
 
 const isInWishlistSchema = z.object({
-	listingId: z.string().min(1, 'Listing ID is required'),
+	listingId: z.string().min(1, 'Listing ID is required')
+		.refine(val => { console.log(val); return isValidObjectId(val); }, "Enter valid Listing ID!"),
 	userAddress: z
 		.string()
 		.min(30, 'User address is required')
@@ -39,9 +44,17 @@ export const getUserWishlist = query(
 				active: true
 			})
 				.populate('listing')
-				.sort({ createdAt: -1 });
+				.sort({ createdAt: -1 })
+				.lean();
 
-			return wishlistItems;
+			const items = wishlistItems.map((wishlistItem) => {
+				const deserialized = plainToInstance(Wishlist, wishlistItem);
+				const serialized = instanceToPlain(deserialized);
+
+				return serialized;
+			});
+			console.log(items);
+			return items;
 		} catch (err) {
 			console.error('Error fetching wishlist:', err);
 			throw error(500, 'Failed to fetch wishlist');
@@ -88,7 +101,7 @@ export const addToWishlist = command(addToWishlistSchema, async ({ listingId, us
 
 		await wishlistItem.save();
 
-		return { success: true, wishlistId: wishlistItem._id };
+		return { success: true, wishlistId: wishlistItem._id.toString() };
 	} catch (err) {
 		console.error('Error adding to wishlist:', err);
 
@@ -138,7 +151,7 @@ export const toggleWishlist = command(addToWishlistSchema, async ({ listingId, u
 		if (existingItem) {
 			existingItem.active = false;
 			await existingItem.save();
-			return { success: true, action: 'removed', wishlistId: existingItem._id };
+			return { success: true, action: 'removed', wishlistId: existingItem.toString() };
 		} else {
 			const wishlistItem = new WishlistModel({
 				userAddress,
@@ -146,7 +159,7 @@ export const toggleWishlist = command(addToWishlistSchema, async ({ listingId, u
 			});
 
 			await wishlistItem.save();
-			return { success: true, action: 'added', wishlistId: wishlistItem._id };
+			return { success: true, action: 'added', wishlistId: wishlistItem._id.toString() };
 		}
 	} catch (err) {
 		console.error('Error toggling wishlist:', err);
