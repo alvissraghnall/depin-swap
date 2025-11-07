@@ -5,7 +5,7 @@
 	import { enhance } from '$app/forms';
 	import type { PageProps } from './$types';
 	import type { Listing } from '$lib/server/models/Listing.model';
-	import { wallet, isConnected } from '$lib/stores/wallet';
+	import { wallet, isConnected, walletAddress } from '$lib/stores/wallet';
 
 	let { data, form }: PageProps = $props();
 
@@ -31,6 +31,12 @@
 		} else if (title.includes('PB')) {
 			amount = title.split('PB')[0];
 			amountUnit = 'PB';
+		} else if (title.includes('vCPU')) {
+			amount = title.split('vCPU')[0];
+			amountUnit = 'vCPU';
+		} else if (title.includes('Mbps')) {
+			amount = title.split('Mbps')[0];
+			amountUnit = 'Mbps';
 		}
 
 		const durationStr = data.listing.duration;
@@ -43,22 +49,46 @@
 		} else if (durationStr.includes('Months')) {
 			duration = durationStr.split('Months')[0];
 			durationUnit = 'Months';
+		} else if (durationStr.includes('Hours')) {
+			duration = durationStr.split('Hours')[0];
+			durationUnit = 'Hours';
 		}
+		duration = duration.trim();
 
-		const priceStr = data.listing.price.toString();
-		if (priceStr.includes('FIL')) {
-			price = priceStr.split('FIL')[0];
-			currency = 'FIL';
-		} else if (priceStr.includes('ETH')) {
-			price = priceStr.split('ETH')[0];
-			currency = 'ETH';
-		} else if (priceStr.includes('USDC')) {
-			price = priceStr.split('USDC')[0];
-			currency = 'USDC';
-		}
+		const priceStr = (data.listing.price / 10 ** 9).toString();
+		price = priceStr.includes('ETH') ? priceStr.split('ETH')[0] : priceStr;
 
 		contact = data.listing.contact;
 	}
+
+	const amountUnits = $derived.by(() => {
+		if (!data.listing) return ['GB', 'TB', 'PB'];
+
+		switch (data.listing.type) {
+			case 'Storage':
+				return ['GB', 'TB', 'PB'];
+			case 'Compute':
+				return ['vCPU', 'RAM', 'GPU'];
+			case 'Bandwidth':
+				return ['Mbps', 'Gbps'];
+			default:
+				return ['GB', 'TB', 'PB'];
+		}
+	});
+
+	const durationUnits = $derived.by(() => {
+		if (!data.listing) return ['Hours', 'Days', 'Weeks', 'Months'];
+
+		switch (data.listing.type) {
+			case 'Compute':
+				return ['Hours', 'Days'];
+			case 'Storage':
+			case 'Bandwidth':
+				return ['Days', 'Weeks', 'Months'];
+			default:
+				return ['Hours', 'Days', 'Weeks', 'Months'];
+		}
+	});
 
 	const handleConnectWallet = async () => {
 		await wallet.connect();
@@ -67,6 +97,19 @@
 	const handleCancel = () => {
 		goto('/my-listings');
 	};
+
+	function getResourceIcon(type: string) {
+		switch (type) {
+			case 'Storage':
+				return 'database';
+			case 'Compute':
+				return 'developer_board';
+			case 'Bandwidth':
+				return 'wifi';
+			default:
+				return 'dns';
+		}
+	}
 </script>
 
 <main class="flex flex-1 justify-center px-4 py-10 sm:px-6 lg:px-8">
@@ -113,7 +156,11 @@
 		{:else}
 			<form
 				method="POST"
-				use:enhance={() => {
+				use:enhance={({ formData }) => {
+					isProcessing = true;
+					statusMessage = 'Saving changes...';
+					formData.set('provider', $walletAddress!);
+
 					return async ({ result }) => {
 						if (result.type === 'success') {
 							statusMessage = 'Listing updated successfully!';
@@ -121,8 +168,10 @@
 								goto('/my-listings');
 							}, 1500);
 						} else if (result.type === 'failure') {
-							statusMessage = (result.data?.error as string) || 'Failed to update listing';
+							console.log(result);
+							statusMessage = (result.data?.message as string) || 'Failed to update listing';
 						}
+						isProcessing = false;
 					};
 				}}
 				class="mt-6 rounded-xl border border-white/10 bg-white/5 p-6 sm:p-8 dark:border-white/10 dark:bg-black/10"
@@ -138,11 +187,18 @@
 						<p class="pb-2 text-base leading-normal font-medium text-gray-200 dark:text-gray-200">
 							Resource Type
 						</p>
-						<input
-							class="form-input flex h-14 w-full min-w-0 flex-1 cursor-not-allowed resize-none overflow-hidden rounded-lg border border-[#3b4d54] bg-[#1c2427]/50 p-[15px] text-base leading-normal font-normal text-gray-400 focus:border-primary focus:ring-0 focus:outline-0 dark:text-gray-400"
-							disabled
-							value={data.listing?.type || ''}
-						/>
+						<div
+							class="flex items-center gap-3 rounded-lg border border-[#3b4d54] bg-[#1c2427]/50 p-3"
+						>
+							<span class="material-symbols-outlined text-primary">
+								{getResourceIcon(data.listing?.type || 'Storage')}
+							</span>
+							<input
+								class="form-input flex h-14 w-full min-w-0 flex-1 cursor-not-allowed resize-none overflow-hidden rounded-lg border border-[#3b4d54] bg-[#1c2427]/50 p-[15px] text-base leading-normal font-normal text-gray-400 focus:border-primary focus:ring-0 focus:outline-0 dark:text-gray-400"
+								disabled
+								value={data.listing?.type || ''}
+							/>
+						</div>
 						<p class="mt-1.5 text-xs text-gray-400 dark:text-gray-500">
 							Resource type cannot be changed after listing.
 						</p>
@@ -171,9 +227,9 @@
 									class="form-select h-14 w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-lg border border-[#3b4d54] bg-[#1c2427] p-[15px] pr-10 pl-4 text-base leading-normal font-normal text-white placeholder:text-[#9db2b9] focus:border-primary focus:ring-2 focus:ring-primary/50 focus:outline-0"
 									bind:value={amountUnit}
 								>
-									<option value="GB">GB</option>
-									<option value="TB">TB</option>
-									<option value="PB">PB</option>
+									{#each amountUnits as unit}
+										<option value={unit}>{unit}</option>
+									{/each}
 								</select>
 								<span
 									class="material-symbols-outlined pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-gray-400"
@@ -205,9 +261,9 @@
 									class="form-select h-14 w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-lg border border-[#3b4d54] bg-[#1c2427] p-[15px] pr-10 pl-4 text-base leading-normal font-normal text-white placeholder:text-[#9db2b9] focus:border-primary focus:ring-2 focus:ring-primary/50 focus:outline-0"
 									bind:value={durationUnit}
 								>
-									<option value="Days">Days</option>
-									<option value="Weeks">Weeks</option>
-									<option value="Months">Months</option>
+									{#each durationUnits as unit}
+										<option value={unit}>{unit}</option>
+									{/each}
 								</select>
 								<span
 									class="material-symbols-outlined pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-gray-400"

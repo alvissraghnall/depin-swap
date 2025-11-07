@@ -9,6 +9,8 @@
 	import type { Base } from '@typegoose/typegoose/lib/defaultClasses';
 	import { browser } from '$app/environment';
 	import type { Resource } from '$lib/types/resource';
+	import { createPurchase } from '$lib/remote/purchases.remote';
+	import { goto } from '$app/navigation';
 
 	let listing = $state<Listing | null>(null);
 	let loading = $state(true);
@@ -18,7 +20,7 @@
 	let isWatchlisted = $state(false);
 	let showTechnicalDetails = $state(false);
 	let inWishlist = $state(false);
-	let wishlistLoading = $state(true);
+	let wishlistLoading = $state(false);
 
 	const listingId = $derived(page.params.id);
 
@@ -55,7 +57,9 @@
 		}
 	});
 
-	async function handleBuyNow() {
+	async function handleBuyNow(ev: Event) {
+		ev.stopPropagation();
+		ev.preventDefault();
 		if (!listing) return;
 
 		if (!$isConnected) {
@@ -80,12 +84,25 @@
 
 			const result = await escrowService.createTrade({
 				sellerAddress: listing.provider,
-				priceInEth: listing.price
+				priceInEth: listing.price / (10 ** 9)
 			});
 
 			if (result.success) {
 				statusMessage = 'Trade created successfully!';
 				alert(`Trade created successfully! Transaction hash: ${result.transactionHash}`);
+
+				if($walletAddress) {
+					
+					createPurchase({
+						listingId: listingId!,
+						buyerAddress: $walletAddress,
+						transactionHash: result.transactionHash ?? '0xHASH'
+					}).then(res => {
+						if(res.success) {
+							goto('/my-purchases');
+						}
+					})
+				}
 			} else {
 				statusMessage = null;
 				alert(result.error || 'Transaction failed');
@@ -112,7 +129,7 @@
 			return;
 		}
 
-		isProcessing = true;
+		wishlistLoading = true;
 		statusMessage = inWishlist ? 'Removing from wishlist...' : 'Adding to wishlist...';
 
 		try {
@@ -133,7 +150,7 @@
 			statusMessage = null;
 			alert('Failed to update wishlist');
 		} finally {
-			isProcessing = false;
+			wishlistLoading = false;
 			setTimeout(() => {
 				statusMessage = null;
 			}, 3000);
@@ -184,20 +201,22 @@
 		</div>
 	{:else if listing}
 		<div class="flex flex-col gap-8">
-			<!-- Breadcrumb -->
 			<div class="flex flex-wrap gap-2 text-sm">
-				<a class="text-white/60 hover:text-white" href="/">Marketplace</a>
-				<span class="text-white/60">/</span>
-				<a class="text-white/60 hover:text-white" href="/">{listing.type}</a>
-				<span class="text-white/60">/</span>
-				<span class="font-medium text-white">Listing #{listing._id.toString().slice(-6)}</span>
+				<a class="text-foreground/60 hover:text-foreground" href="/">Marketplace</a>
+
+				<span class="text-foreground/60">/</span>
+
+				<a class="text-foreground/60 hover:text-foreground" href="/">{listing.type}</a>
+
+				<span class="text-foreground/60">/</span>
+
+				<span class="font-medium text-foreground">Listing #{listing._id.toString().slice(-6)}</span>
 			</div>
 
 			<div class="grid grid-cols-1 gap-12 lg:grid-cols-3">
-				<!-- Listing Icon -->
 				<div class="flex items-start justify-center lg:col-span-1">
 					<div
-						class="flex h-64 w-64 items-center justify-center rounded-xl border border-white/10 bg-white/5 shadow-sm"
+						class="flex h-64 w-64 items-center justify-center rounded-xl border border-border bg-surface shadow-sm"
 					>
 						<span class="material-symbols-outlined text-9xl text-primary">
 							{getIcon(listing.type)}
@@ -206,65 +225,71 @@
 				</div>
 
 				<div class="flex flex-col gap-8 lg:col-span-2">
-					<!-- Title and Tags -->
 					<div class="flex flex-col gap-4">
 						<div class="flex flex-wrap gap-3">
 							<div
-								class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full {getTypeColor(
+								class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full px-4 {getTypeColor(
 									listing.type
 								)}"
 							>
 								<p class="text-sm font-medium">{listing.type}</p>
 							</div>
 							<div
-								class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary/20 text-primary"
+								class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary/20 px-4 text-primary"
 							>
 								<p class="text-sm font-medium">Available</p>
 							</div>
 							<div
-								class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full border border-white/20 bg-white/10 px-4"
+								class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full border border-border bg-surface px-4"
 							>
 								<p class="text-sm font-medium">Verified Lister</p>
 							</div>
 						</div>
 						<div>
-							<h1 class="text-4xl font-bold tracking-tighter text-white">{listing.title}</h1>
-							<p class="mt-2 text-white/60">
+							<h1 class="text-4xl font-bold tracking-tighter text-foreground">{listing.title}</h1>
+
+							<p class="mt-2 text-foreground/60">
 								High-performance {listing.type.toLowerCase()} resource for your needs.
 							</p>
 						</div>
 					</div>
 
 					<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-						<div class="rounded-lg border border-white/10 bg-white/5 p-4">
-							<p class="text-sm text-white/60">Amount</p>
-							<p class="text-lg font-semibold text-white">{listing.title}</p>
+						<div class="rounded-lg border border-border bg-surface p-4">
+							<p class="text-sm text-foreground/60">Amount</p>
+
+							<p class="text-lg font-semibold text-foreground">{listing.title}</p>
 						</div>
-						<div class="rounded-lg border border-white/10 bg-white/5 p-4">
-							<p class="text-sm text-white/60">Duration</p>
-							<p class="text-lg font-semibold text-white">{listing.duration}</p>
+						<div class="rounded-lg border border-border bg-surface p-4">
+							<p class="text-sm text-foreground/60">Duration</p>
+
+							<p class="text-lg font-semibold text-foreground">{listing.duration}</p>
 						</div>
-						<div class="rounded-lg border border-white/10 bg-white/5 p-4">
-							<p class="text-sm text-white/60">Price (ETH)</p>
-							<p class="text-lg font-semibold text-white">{listing.price} ETH</p>
+						<div class="rounded-lg border border-border bg-surface p-4">
+							<p class="text-sm text-foreground/60">Price (ETH)</p>
+
+							<p class="text-lg font-semibold text-foreground">{listing.price / 10 ** 9} ETH</p>
 						</div>
-						<div class="rounded-lg border border-white/10 bg-white/5 p-4">
-							<p class="text-sm text-white/60">Price Unit</p>
-							<p class="text-lg font-semibold text-white">{listing.priceUnit}</p>
+						<div class="rounded-lg border border-border bg-surface p-4">
+							<p class="text-sm text-foreground/60">Price Unit</p>
+
+							<p class="text-lg font-semibold text-foreground">{listing.priceUnit}</p>
 						</div>
 					</div>
 
-					<div class="rounded-lg border border-white/10 bg-white/5 p-6">
-						<h3 class="text-lg font-bold text-white">Lister Information</h3>
-						<div class="mt-4 flex items-center justify-between border-t border-white/10 pt-4">
+					<div class="rounded-lg border border-border bg-surface p-6">
+						<h3 class="text-lg font-bold text-foreground">Lister Information</h3>
+
+						<div class="mt-4 flex items-center justify-between border-t border-border pt-4">
 							<div class="flex items-center gap-3">
 								<div
-									class="flex aspect-square size-12 items-center justify-center rounded-full bg-white/10 bg-cover bg-center bg-no-repeat"
+									class="flex aspect-square size-12 items-center justify-center rounded-full bg-surface-hover bg-cover bg-center bg-no-repeat"
 								>
-									<span class="material-symbols-outlined text-white">person</span>
+									<span class="material-symbols-outlined text-foreground">person</span>
 								</div>
 								<div>
-									<p class="font-semibold text-white">{formatAddress(listing.provider)}</p>
+									<p class="font-semibold text-foreground">{formatAddress(listing.provider)}</p>
+
 									<div class="flex items-center gap-1 text-sm text-primary">
 										<span class="material-symbols-outlined text-base">verified</span>
 										<span>5 successful trades</span>
@@ -272,7 +297,7 @@
 								</div>
 							</div>
 							<button
-								class="flex h-10 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 text-sm font-medium hover:bg-white/10"
+								class="flex h-10 items-center justify-center gap-2 rounded-lg border border-border bg-surface px-4 text-sm font-medium text-foreground hover:bg-surface-hover"
 							>
 								<span class="material-symbols-outlined text-base">chat_bubble</span>
 								<span class="hidden sm:inline">Contact</span>
@@ -282,7 +307,7 @@
 
 					{#if statusMessage}
 						<div
-							class="rounded-lg border border-blue-500/20 bg-blue-500/10 px-4 py-3 text-sm text-blue-400"
+							class="rounded-lg border border-blue-500/20 bg-blue-500/10 px-4 py-3 text-sm text-blue-600"
 						>
 							{statusMessage}
 						</div>
@@ -292,7 +317,7 @@
 						<button
 							onclick={handleBuyNow}
 							disabled={isProcessing}
-							class="text-background-dark flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-base font-bold shadow-lg shadow-primary/30 transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+							class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-base font-bold text-primary-foreground shadow-lg shadow-primary/30 transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
 						>
 							{#if isProcessing}
 								<span class="material-symbols-outlined animate-spin">refresh</span>
@@ -306,19 +331,34 @@
 						<button
 							onclick={handleToggleWishlist}
 							disabled={isProcessing || wishlistLoading}
-							class="flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-6 py-3 text-base font-bold text-white transition hover:bg-white/10 sm:w-auto"
+							class="group flex w-full items-center justify-center gap-2 rounded-lg border border-border/70 bg-surface px-6 py-3 text-base font-semibold text-foreground transition-all duration-200 hover:border-accent hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
 							title={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
 						>
-							<span class="material-symbols-outlined">
-								{inWishlist ? 'bookmark' : 'bookmark_add'}
+							<span
+								class="material-symbols-outlined text-lg transition-transform duration-200 group-hover:scale-110"
+							>
+								{#if wishlistLoading}
+									<span class="material-symbols-outlined animate-spin text-accent">refresh</span>
+								{:else if inWishlist}
+									bookmark
+								{:else}
+									bookmark_add
+								{/if}
 							</span>
-							<span class="hidden sm:inline">
-								{inWishlist ? 'Remove from Watchlist' : 'Add to Watchlist'}
+
+							<span class="hidden sm:inline max-md:text-sm">
+								{#if wishlistLoading}
+									Loading...
+								{:else if inWishlist}
+									Remove from Wishlist
+								{:else}
+									Add to Wishlist
+								{/if}
 							</span>
 						</button>
 					</div>
 
-					<div class="border-t border-white/10 pt-6">
+					<div class="border-t border-border pt-6">
 						<details
 							class="group"
 							ontoggle={(e) => (showTechnicalDetails = (e.target as HTMLDetailsElement)?.open)}
@@ -326,29 +366,36 @@
 							<summary
 								class="flex cursor-pointer list-none items-center justify-between font-medium"
 							>
-								<h3 class="text-lg font-bold text-white">Technical Details</h3>
+								<h3 class="text-lg font-bold text-foreground">Technical Details</h3>
+
 								<div class="transition-transform group-open:rotate-180">
-									<span class="material-symbols-outlined text-white">expand_more</span>
+									<span class="material-symbols-outlined text-foreground">expand_more</span>
 								</div>
 							</summary>
 							<div class="mt-4 grid grid-cols-1 gap-x-4 gap-y-2 text-sm sm:grid-cols-2">
-								<div class="flex justify-between border-b border-white/10 py-2 sm:border-none">
-									<span class="text-white/60">Provider ID:</span>
-									<span class="font-mono text-white">{formatAddress(listing.provider)}</span>
+								<div class="flex justify-between border-b border-border py-2 sm:border-none">
+									<span class="text-foreground/60">Provider ID:</span>
+
+									<span class="font-mono text-foreground">{formatAddress(listing.provider)}</span>
 								</div>
-								<div class="flex justify-between border-b border-white/10 py-2 sm:border-none">
-									<span class="text-white/60">Resource Type:</span>
-									<span class="text-white">{listing.type}</span>
+								<div class="flex justify-between border-b border-border py-2 sm:border-none">
+									<span class="text-foreground/60">Resource Type:</span>
+
+									<span class="text-foreground">{listing.type}</span>
 								</div>
-								<div class="flex justify-between border-b border-white/10 py-2 sm:border-none">
-									<span class="text-white/60">Created:</span>
-									<span class="text-white"
+								<div class="flex justify-between border-b border-border py-2 sm:border-none">
+									<span class="text-foreground/60">Created:</span>
+
+									<span class="text-foreground"
 										>{new Date(listing.createdAt as unknown as string).toLocaleDateString()}</span
 									>
 								</div>
 								<div class="flex justify-between py-2 sm:border-none">
-									<span class="text-white/60">Status:</span>
-									<span class="text-white">{listing.available ? 'Available' : 'Unavailable'}</span>
+									<span class="text-foreground/60">Status:</span>
+
+									<span class="text-foreground"
+										>{listing.available ? 'Available' : 'Unavailable'}</span
+									>
 								</div>
 							</div>
 						</details>

@@ -246,9 +246,9 @@
 						>
 							<span class="truncate">Submit Listing</span>
 						</button>
-						<p class="mt-4 text-center text-xs text-text-secondary">
+						<!-- <p class="mt-4 text-center text-xs text-text-secondary">
 							Submitting the listing will require a wallet signature and a small gas fee.
-						</p>
+						</p> -->
 					</div>
 				</form>
 			</div>

@@ -1,6 +1,7 @@
 import { getModelForClass, prop, pre } from '@typegoose/typegoose';
 import { Listing } from './Listing.model';
 import { DocumentCT } from './DocumentCT.model';
+import { Type } from 'class-transformer';
 
 @pre<Wishlist>('save', function (next) {
 	this.updatedAt = new Date();
@@ -13,6 +14,7 @@ export class Wishlist extends DocumentCT {
 	userAddress!: string;
 
 	@prop({ required: true, ref: () => Listing })
+	@Type(() => Listing)
 	listing!: Listing;
 
 	@prop({ default: true, type: String })

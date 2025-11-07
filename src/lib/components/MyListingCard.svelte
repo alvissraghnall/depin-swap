@@ -64,7 +64,7 @@
 		</p>
 		<p>
 			<span class="font-medium text-gray-700 dark:text-gray-300">Price:</span>
-			{listing.price} ETH {listing.priceUnit}
+			{listing.price / 10 ** 9} ETH {listing.priceUnit}
 		</p>
 	</div>
 	<div class="mt-2 flex gap-3">

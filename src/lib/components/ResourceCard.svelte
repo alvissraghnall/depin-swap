@@ -46,7 +46,10 @@
 		}
 	});
 
-	async function handleBuyNow() {
+	async function handleBuyNow(ev: Event) {
+		ev.stopPropagation();
+		ev.preventDefault();
+
 		if (!$wallet.isConnected) {
 			await wallet.connect();
 			return;
@@ -91,7 +94,9 @@
 		}
 	}
 
-	async function handleToggleWishlist() {
+	async function handleToggleWishlist(ev: Event) {
+		ev.stopPropagation();
+		ev.preventDefault();
 		if (!$isConnected) {
 			await wallet.connect();
 			return;
@@ -170,8 +175,8 @@
 	<div class="flex items-center justify-between border-t border-border p-4">
 		<div class="mb-3">
 			<p class="text-sm text-slate-700 dark:text-white/60">Price</p>
-			<p class="text-2xl font-bold text-primary">{parseInt(price as string)} ETH</p>
-			<p class="text-sm text-slate-700 dark:text-white/40">/ {priceUnit}</p>
+			<p class="text-2xl font-bold text-primary">{parseInt(price as string) / 10 ** 9} ETH</p>
+			<p class="text-sm text-slate-700 dark:text-white/40">{priceUnit}</p>
 		</div>
 
 		<div class="flex gap-2">
@@ -184,7 +189,7 @@
 				{#if wishlistLoading}
 					<span class="material-symbols-outlined animate-spin">refresh</span>
 				{:else}
-					<span class="material-symbols-outlined">
+					<span class="material-symbols-outlined { inWishlist ? 'fvsf' : '' }">
 						{inWishlist ? 'bookmark' : 'bookmark_border'}
 					</span>
 				{/if}
@@ -208,3 +213,11 @@
 		</div>
 	</div>
 </a>
+
+<style>
+
+	.fvsf {
+		font-variation-settings: 'FILL' 1;
+	}
+
+</style>

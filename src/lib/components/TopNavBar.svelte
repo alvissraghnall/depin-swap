@@ -11,6 +11,7 @@
 	const navLinks = [
 		{ href: '/', label: 'Marketplace' },
 		{ href: '/my-listings', label: 'My Listings' },
+		{ href: '/my-purchases', label: 'My Purchases' },
 		{ href: '/wishlist', label: 'Wishlist' },
 		{ href: '/list-resource', label: 'List Resource' }
 		//{ href: '/faq', label: 'FAQ' }
@@ -25,6 +26,7 @@
 
 	function closeMenu() {
 		mobileMenuOpen = false;
+		console.log(currentPath);
 	}
 
 	function openConnectModal() {
@@ -49,7 +51,7 @@
 
 <header class="sticky top-0 z-50 w-full border-b border-border bg-background/90 backdrop-blur-sm">
 	<div
-		class="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"
+		class="container mx-auto flex h-16 max-w-full items-center justify-between px-4 sm:px-6 lg:px-8"
 	>
 		<div class="flex items-center gap-4 text-text-primary">
 			<div class="size-6 text-primary">

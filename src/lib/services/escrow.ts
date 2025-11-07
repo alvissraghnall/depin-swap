@@ -1,6 +1,7 @@
 import {
 	BrowserProvider,
 	Contract,
+	isAddress,
 	parseEther,
 	type Eip1193Provider,
 	type TransactionReceipt
@@ -38,24 +39,45 @@ class EscrowService {
 	private cachedProvider?: BrowserProvider;
 	private cachedContract?: Contract;
 
-	private async getProvider(): Promise<any> {
-		if (this.cachedProvider) return this.cachedProvider;
+	private async getProvider(): Promise<BrowserProvider> {
+		if (this.cachedProvider) {
+			return this.cachedProvider;
+		}
 
+		try {
+			const state = appKit?.getState();
+			const provider = appKit?.getProvider<Eip1193Provider>('eip155');
+			console.log(state, provider, appKit?.getWalletProvider());
+			// const eip155Provider = state?.selectedNetworkId.providers['eip155'] as Eip1193Provider;
+			if (provider) {
+				console.log('Provider found.');
+				const ethersProvider = new BrowserProvider(provider);
+				this.cachedProvider = ethersProvider;
+				return ethersProvider;
+			}
+		} catch (e) {
+			console.warn('Error reading appKit state, falling back to subscription.', e);
+		}
+
+		console.log('No provider in state, subscribing for connection...');
 		return new Promise((resolve, reject) => {
 			const unsubscribe = appKit?.subscribeProviders((state) => {
 				const eip155Provider = state['eip155'] as Eip1193Provider;
+				console.log(eip155Provider, 2899);
 				if (eip155Provider && typeof eip155Provider.request === 'function') {
 					unsubscribe?.();
 					const ethersProvider = new BrowserProvider(eip155Provider);
 					this.cachedProvider = ethersProvider;
-					resolve(eip155Provider);
+					resolve(ethersProvider);
 				}
 			});
+
+			console.log(unsubscribe);
 
 			const timeout = setTimeout(() => {
 				unsubscribe?.();
 				reject(new Error(EscrowError.ProviderTimeout));
-			}, 5000);
+			}, 7000);
 
 			const originalResolve = resolve;
 			resolve = ((value) => {
@@ -66,12 +88,13 @@ class EscrowService {
 	}
 
 	private async getContract(): Promise<Contract> {
-		if (this.cachedContract) return this.cachedContract;
+		if (this.cachedContract) {
+			return this.cachedContract;
+		}
 
-		const provider = await this.getProvider();
-		if (!provider) throw new Error('No provider found');
+		const ethersProvider = await this.getProvider();
+		if (!ethersProvider) throw new Error('No provider found');
 
-		const ethersProvider = new BrowserProvider(provider);
 		const signer = await ethersProvider.getSigner();
 
 		const contract = new Contract(ESCROW_CONTRACT_ADDRESS, escrowAbi, signer);
@@ -81,7 +104,7 @@ class EscrowService {
 
 	async createTrade({ sellerAddress, priceInEth }: CreateTradeParams): Promise<TradeResult> {
 		try {
-			if (!/^0x[a-fA-F0-9]{40}$/.test(sellerAddress)) {
+			if (!isAddress(sellerAddress)) {
 				return { success: false, error: EscrowError.InvalidAddress };
 			}
 
@@ -92,7 +115,12 @@ class EscrowService {
 
 			const isSepolia = await this.checkNetwork();
 			if (!isSepolia) {
-				return { success: false, error: EscrowError.WrongNetwork };
+				const switched = await this.switchToSepolia();
+				if (!switched) {
+					return { success: false, error: EscrowError.WrongNetwork };
+				}
+				// Give the provider a moment to settle after network switch
+				await new Promise((res) => setTimeout(res, 500));
 			}
 
 			const contract = await this.getContract();
@@ -116,12 +144,12 @@ class EscrowService {
 
 	async checkNetwork(): Promise<boolean> {
 		try {
-			const provider = await this.getProvider();
-			if (!provider) return false;
+			const ethersProvider = await this.getProvider();
+			if (!ethersProvider) return false;
 
-			const ethersProvider = new BrowserProvider(provider);
 			const network = await ethersProvider.getNetwork();
 
+			console.log(network.chainId);
 			return Number(network.chainId) === SEPOLIA_CHAIN_ID;
 		} catch (error) {
 			console.error('Error checking network:', error);
@@ -132,7 +160,10 @@ class EscrowService {
 	async switchToSepolia(): Promise<boolean> {
 		try {
 			if (appKit) {
-				await appKit.switchNetwork(sepolia);
+				// clear cached provider so it can be re-fetched on the new network
+				this.cachedProvider = undefined;
+				this.cachedContract = undefined;
+				await appKit.switchNetwork(sepolia, { throwOnFailure: true });
 				return true;
 			}
 			return false;
